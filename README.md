@@ -101,9 +101,11 @@ roadmap enormously.
 - Pay the perpetual **rebase tax** against fast-moving upstream; budget ongoing
   engineering for it.
 
-**Distribution:** direct download + notarization (macOS), Microsoft Store / direct
-(Windows). A process-spawning IDE fork is not Mac App Store eligible — this is how
-every serious terminal/IDE ships (Tabby, Hyper, Cursor, VSCodium).
+**Distribution:** **macOS only for now** — direct download + notarization. The **stack stays
+cross-platform** (we keep all platform abstractions; Windows/Linux are a later CI flip, not a
+rewrite). A process-spawning IDE fork is not Mac App Store eligible — this is how every serious
+terminal/IDE ships (Tabby, Hyper, Cursor, VSCodium). Detailed step-by-step build, tests, and
+success conditions are in [`docs/mvp.md`](docs/mvp.md).
 
 ### Why not the alternatives
 - **Build on Wave Terminal:** Wave (Electron + Go + React + xterm.js) is a great UX
@@ -163,7 +165,7 @@ The **MVP is Phases 0–2** (foundation + cockpit + project-relevant feed). Ads
 
 ### Phase 0 — Foundation
 - Fork Code-OSS; branded dev build; strip MS branding/telemetry; wire Open VSX.
-- CI + signed/notarized builds for macOS + Windows (+ Linux).
+- CI + signed/notarized build for **macOS only** (stack stays cross-platform; Windows/Linux later).
 - **Done when:** a renamed, branded build runs on all targets from CI.
 
 ### Phase 1 — Agent Cockpit *(single-player wedge — must be excellent)*
