@@ -13,8 +13,16 @@ stubs/TODOs left behind. Full context in [`README.md`](README.md), [`docs/mvp.md
 - **Payments (later):** Stripe Connect.
 - **Platform:** **macOS only for now**; keep the stack **cross-platform** (no Windows/Linux
   code removed — later is a CI flip, not a rewrite).
-- **Source copies** (decoupled, no upstream linkage): `vendor/code-oss` (fork base) ·
-  `vendor/waveterm` (UX reference). See [`vendor/README.md`](vendor/README.md).
+
+## Reference repos — READ-ONLY, NEVER edit
+`vendor/` holds local, decoupled source copies kept **only as working references** — proven,
+runnable solutions to study and copy patterns from. **Never edit, build, or run anything inside
+`vendor/`.** It is not our product code; adapt patterns into our own code *outside* `vendor/`
+(copy a tree out first when we fork). See [`vendor/README.md`](vendor/README.md).
+- `vendor/code-oss` — Code-OSS (the VS Code stack): reference for the workbench, terminal
+  (`xterm.js`/`node-pty`), shell-integration (OSC 633), and the extension/webview model.
+- `vendor/waveterm` — Wave Terminal: reference for the block-mosaic grid and the running/stale
+  status UX.
 
 ## Test conventions
 - **Assistant writes/runs headless tests only:** logic/state machines, parsers, Go services,
