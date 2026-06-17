@@ -13,6 +13,8 @@ stubs/TODOs left behind. Full context in [`README.md`](README.md), [`docs/mvp.md
 - **Payments (later):** Stripe Connect.
 - **Platform:** **macOS only for now**; keep the stack **cross-platform** (no Windows/Linux
   code removed — later is a CI flip, not a rewrite).
+- **Source copies** (decoupled, no upstream linkage): `vendor/code-oss` (fork base) ·
+  `vendor/waveterm` (UX reference). See [`vendor/README.md`](vendor/README.md).
 
 ## Test conventions
 - **Assistant writes/runs headless tests only:** logic/state machines, parsers, Go services,
