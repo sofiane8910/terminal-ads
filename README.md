@@ -1,39 +1,75 @@
 # terminal-ads (working name)
 
-**Bloomberg for developers.** A developer workspace you live in — terminal first,
-IDE later — wrapped around a live community layer (presence, chat, a news + ads
-feed) that becomes the real moat. Free to use, monetized by ads with **50% revenue
-shared back to users**, growing into media partnerships.
+**Bloomberg for developers.** A terminal-native cockpit for solo technical founders:
+it orchestrates the AI agents you run, guarantees you **never miss a task finishing**,
+and turns the dead-time while agents work into leverage — **project-relevant
+intelligence now, an opt-in peer network later.** Free to use; monetized by ads with
+**50% revenue shared back to users** (added *only after* the in-app feed is genuinely
+useful), growing into media partnerships and a privacy-gated founder-benchmark data
+product.
+
+> Detailed MVP build breakdown (steps, substeps, purpose, and tests) lives in
+> [`docs/mvp.md`](docs/mvp.md).
 
 This README is the living strategy + architecture doc. It records *why* each major
 decision was made, so the trace survives.
 
 ---
 
+## Target user
+
+A **solo technical founder**, deep in the terminal, running one or more AI agents,
+strong at building but **weak at distribution / business acumen**, and working in a
+**silo** with no sounding board. (Pains validated by research across Indie Hackers, HN,
+and founder blogs — see [`docs/mvp.md`](docs/mvp.md).)
+
 ## The thesis
 
-The terminal/IDE is the **daily utility** that gets people in the door. The
-**network** — knowing who's working and on what, talking live to other developers,
-a feed of tech news and relevant ads — is what they can't leave.
+The terminal/cockpit is the **daily utility** that gets founders in the door. The
+**intelligence + peer network** is what they can't leave.
 
-This is structurally the Bloomberg Terminal: nobody pays ~$32k/year for the *data*;
-they stay because **everyone who matters is on the chat network**, and leaving means
-cutting yourself off. Terminal UX can be copied in a quarter. A populated developer
-network cannot be copied at all. The network is the defensible business.
+This is structurally the Bloomberg Terminal: nobody pays ~$32k/year for the *data*; they
+stay because of the closed network and the workflow lock-in, and leaving means cutting
+yourself off. The cockpit can be copied in a quarter. A relevance-tuned intelligence
+engine and a populated, confidential founder network cannot.
 
-**Why most developer social networks die — and why this one shouldn't:** they fail
-the cold-start problem (empty room → users leave → stays empty). Our defense is
-structural: **the single-player experience is genuinely useful with zero other users
-online.** A great terminal + status engine + free IDE has standalone value, so early
-adopters stay and get value *before* the network exists. Nail single-player first,
-layer multiplayer on top. That sequencing is the whole survival strategy.
+**The core mechanic — status-gated dead-time.** The cockpit knows precisely when each
+agent is *running / waiting-for-input / done / failed*. While you wait, it surfaces
+project-relevant intelligence; the instant an agent needs you, the surface **yields and
+pulls you back**. Guarantee: **you never miss a completion.** That guarantee is what makes
+feeding you content *non-distracting* — and it's impossible without the terminal
+integration we're building.
 
-## What we're building (and what it replaces)
+**Status alone is not the moat.** The agent-monitoring space is already crowding (cmux,
+Superset, Pane, aTerm, Termdock — mostly macOS-only wrappers). Live status is *table
+stakes*. Our defensible ground is what we do with the dead-time it exposes:
+**(a) actionable business/distribution intelligence** (the founder's #1 weakness) and
+**(b) an opt-in, confidential peer network** (the founder's #2 pain, isolation). No one
+occupies that intersection.
 
-- **Endgame:** a full dev environment that replaces VS Code/Cursor *and* your terminal —
-  the one app a developer keeps open all day.
-- **On-ramp:** a best-in-class terminal / command center that's worth using on its own.
-- **Moat:** an opt-in developer network (presence + live chat) on top.
+**Why most developer networks die — and why this one shouldn't:** the cold-start problem
+(empty room → users leave → stays empty). Our defense is structural: **the single-player
+experience is genuinely useful with zero other users online** (the cockpit + a
+project-relevant feed). Nail single-player first; layer the network on top.
+
+## What we're building (the bundle)
+
+Three layers, built in this order:
+
+1. **Agent Cockpit** *(the vehicle — table-stakes parity):* a multi-agent terminal grid
+   with glanceable status, never-miss-completion alerts, and "who needs me first" ranking.
+   Cross-platform (most rivals are macOS-only).
+2. **Intelligence Rail** *(moat A):* curated + AI-summarized, **actionable**, distribution/
+   business-oriented nuggets keyed to your **local, private** project context (stack / repo
+   topic). A few "act on this" cards — never an infinite scroll. *This is what we nail
+   before introducing ads.*
+3. **Peer Network** *(moat B — later):* opt-in, abstracted presence → confidential cohort
+   connection + **anonymized operational benchmarking** (the data VCs have and founders
+   don't). Non-social, productivity-framed.
+
+**Endgame:** a full dev environment that replaces VS Code/Cursor *and* your terminal —
+the one app a founder keeps open all day. **On-ramp:** the cockpit + feed, worth using on
+its own.
 
 ## Locked architecture decision: fork Code-OSS
 
@@ -108,60 +144,66 @@ kept deliberately simple.
 **Net stack:** Code-OSS fork (client) + Go + Supabase + Stripe, plus a moderation API
 and a host. One client language, one backend language, one managed data layer.
 
-## Roadmap — single-player first, then the network ladder
+## Roadmap — single-player first, feed before ads, network last
 
 Each phase has a **move-on criterion**; we don't advance until the prior phase is great.
+The **MVP is Phases 0–2** (foundation + cockpit + project-relevant feed). Ads
+(Phase 3) are introduced **only after** the feed is genuinely useful.
 
 ### Phase 0 — Foundation
 - Fork Code-OSS; branded dev build; strip MS branding/telemetry; wire Open VSX.
 - CI + signed/notarized builds for macOS + Windows (+ Linux).
 - **Done when:** a renamed, branded build runs on all targets from CI.
 
-### Phase 1 — Single-player core *(the wedge — must be excellent)*
+### Phase 1 — Agent Cockpit *(single-player wedge — must be excellent)*
 - Promote the terminal to hero; multi-pane **mosaic grid** (Wave as UX reference,
   VS Code split-panes as base), each pane independently focusable / full-screen.
-- **Status engine** on OSC 633: glanceable running / ok / failed+code / idle / stale.
-- Completion & failure notifications ("build finished", "agent 3 needs input").
-- Relentless polish on speed and feel.
-- **Done when:** people use it as their daily-driver terminal with **zero** network
+- **Status engine** on OSC 133/633: running / waiting-for-input / done / failed / idle / stale.
+- **Never-miss-completion** notifications (reliable, incl. tmux/SSH) + "who needs me first."
+- **Done when:** people use it as their daily-driver agent workspace with **zero** network
   features — measured by solo retention / DAU.
 
-### Phase 2 — Feed rail *(one-way monetization, still no social)*
-- Feed panel: curated tech news + tasteful native ads.
-- Ads server + impression/click + attribution + basic fraud detection.
-- Accounts (GitHub OAuth) + rev-share ledger + Stripe Connect payouts.
-- First hand-sold flat-rate sponsorships.
-- **Done when:** payout pipeline works end-to-end and users *like* the feed
-  (not just tolerate it); positive revenue per active user.
+### Phase 2 — Project-relevant Intelligence Feed *(no ads yet — nail relevance first)*
+- Local, private **project-context extraction** (stack / repo topic — on-device).
+- **Content ingestion** (Go) + **relevance ranking** to the user's project.
+- **AI-summarized, actionable** nuggets (distribution/business-oriented), not a scroll feed.
+- **Status-gated** Feed Rail: shows during dead-time, yields on agent events.
+- **Done when:** the feed is *relevant and useful* (low dismiss rate, positive feedback) —
+  this is the bar we must clear **before** monetizing.
 
-### Phase 3 — Presence *(opt-in, abstracted)*
-- **Opt-in, off by default.** "N developers building now," abstracted activity
+### Phase 3 — Ads + rev-share *(monetization, after the feed is nailed)*
+- Native ad units in the proven feed; ad server + impression/click + attribution + fraud.
+- Rev-share ledger + **Stripe Connect** payouts; first hand-sold flat-rate sponsorships.
+- **Done when:** payouts work end-to-end and ads don't degrade feed quality / retention.
+
+### Phase 4 — Presence *(opt-in, abstracted)*
+- **Opt-in, off by default.** "Founders building now / like you," abstracted activity
   ("Rust / web project") — **never** repo names, file paths, or code.
-- Granular privacy controls; enterprise-safe by design.
-- **Supabase Realtime Presence** goes live.
-- **Done when:** healthy opt-in rate, presence adds value even at low density,
-  and zero privacy backlash.
+- Granular privacy controls; enterprise-safe by design. **Supabase Realtime Presence**.
+- **Done when:** healthy opt-in rate, value at low density, zero privacy backlash.
 
-### Phase 4 — Live exchange *(the moat)*
-- Live chat (Supabase Realtime Broadcast + Postgres history): global / topical / rooms;
-  quick exchange with people working live.
-- Trust & safety at scale: moderation, spam, abuse, reporting.
-- **Done when:** chat density measurably lifts retention (network effect kicks in).
+### Phase 5 — Peer Network *(the moat)*
+- Confidential **cohorts** of similar-stage founders + **anonymized benchmarking**
+  (CAC/retention/ARR percentiles). Optional live exchange (Supabase Realtime Broadcast +
+  Postgres history) with trust & safety (moderation, spam, abuse).
+- **Done when:** network density measurably lifts retention (network effect kicks in).
 
-### Phase 5 — IDE expansion + media partnerships + data product
+### Phase 6 — IDE expansion + media partnerships + data product
 - Progressively unhide the IDE (editor, git, debug, extensions) already in the fork.
 - **Media partnerships:** publisher syndication, sponsored/native content in the feed.
-- **Aggregate data product** (high-margin, long-term): anonymized trends — what
-  languages/tools/frameworks developers are adopting in real time. **Only** with an
-  airtight privacy model.
+- **Aggregate data product** (high-margin): anonymized founder/tooling trends. **Only** with
+  an airtight privacy model.
 
 ## Monetization
 
-1. **Ads with 50% rev-share** — the feed; launch revenue. Flat sponsorships first
-   (per-user CPMs are small; scale matters), CPM/CPC later.
-2. **Media partnerships** — tech publishers syndicate content; sponsored native
-   placements.
-3. **Aggregate data product** — privacy-gated developer-trend data (Bloomberg-style),
+**Sequencing matters: we nail the project-relevant feed first, then monetize it.** Ads
+are introduced only once the feed is demonstrably useful, so we never poison relevance
+for revenue.
+
+1. **Ads with 50% rev-share** *(after the feed is nailed)* — native units in the proven
+   feed. Flat sponsorships first (per-user CPMs are small; scale matters), CPM/CPC later.
+2. **Media partnerships** — tech publishers syndicate content; sponsored native placements.
+3. **Aggregate data product** — privacy-gated founder/tooling-trend data (Bloomberg-style),
    sellable to tooling companies and investors.
 
 ## Trust principles (non-negotiable)
@@ -182,22 +224,30 @@ banned because they were *involuntary*; ours are opt-in and pay the user. Protec
 ## Competitive landscape
 
 - **Bloomberg Terminal** — the model: utility + closed network = lock-in.
-- **Replit** — closest "social coding" analog (community + multiplayer), but browser-
-  first, not the terminal/IDE you live in, and not ad/media monetized.
-- **Cursor / Windsurf** — VS Code forks (Cursor ~$2B ARR proves the playbook), but
-  solo tools with no community layer.
-- **Warp / Wave / Tabby / Zellij** — strong terminal UX references; none combine a
-  workspace with a developer network + ad/media monetization.
+- **Agent cockpits** (cmux, Superset, Pane, aTerm, Yaw, Termdock, Claude Squad) — already
+  do live agent status; mostly **macOS-only wrappers**. They expose dead-time; **none turn
+  it into intelligence or a network.** Status is table stakes; this is our parity layer.
+- **Info feeds** (Hacker News, daily.dev, TLDR) — popularity ≠ relevance, doomscroll,
+  non-actionable. We rank to *your project* and summarize into action.
+- **Founder intelligence** (OpenBB, FounderNest) — market/competitive data in isolation;
+  no link to the founder's own workflow, no confidential peer benchmarking.
+- **Builder communities** (Indie Hackers, WIP, build-in-public) — community ≠ collaboration;
+  performative; isolation persists. We do confidential, productivity-framed connection.
+- **Cursor / Windsurf** — VS Code forks (Cursor ~$2B ARR proves the playbook), but solo
+  tools with no intelligence or network layer.
 - Note: "Ads CLI" tools (Meta Ads CLI, Adscriptly) are unrelated — they *manage* ad
   campaigns from the terminal; they don't *show* ads in it.
 
 ## Key risks (eyes open)
 
-- **Presence privacy** — the make-or-break trust landmine (mitigated: opt-in + abstracted).
-- **Cold start** — mitigated by single-player-first value.
+- **Status commoditization** — agent monitoring is crowding fast; we differentiate on
+  intelligence + network, not monitoring.
+- **Feed relevance** — if the rail is noise, the whole thesis fails; relevance *is* the
+  product, which is why we nail it before ads.
+- **Presence/benchmarking privacy** — the make-or-break trust landmine (mitigated: opt-in
+  + abstracted + confidential).
+- **Cold start** — mitigated by single-player-first value (cockpit + feed).
 - **Marketplace gap** — can't ship MS-proprietary extensions; need open replacements.
-- **Platform scope** — we're building a network backend + trust & safety, not just a
-  client (the fork is ~30% of the work).
 - **Fork maintenance** — perpetual rebase tax against upstream.
 
 ## Status
