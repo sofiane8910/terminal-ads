@@ -83,29 +83,30 @@ over-engineer before there are users.** Scale the hot paths only when load deman
   news/ads/presence feed; native workbench contributions for status indicators on
   terminal tabs.
 
-### Backend (the network) — the larger build over time
-- **Primary services:** **TypeScript / Node.js (NestJS)** — shares language and types
-  with the client, largest talent pool, fast product velocity.
-- **Performance-critical services:** **Go** for the real-time gateway, ads/fraud, and
-  feed ingestion as they grow hot.
-- **Database:** **PostgreSQL** (system of record) + **Redis** (presence/ephemeral state,
-  pub/sub, rate limiting).
-- **Real-time (presence + chat):** start with a **managed service (Ably or Pusher)** to
-  validate fast; migrate to self-hosted **Centrifugo** (Go) — or **Phoenix Channels**
-  (Elixir) if we want best-in-class presence — when scale/economics demand. WebSockets
-  throughout.
-- **Auth/identity:** **GitHub OAuth** (perfect for developers) via a managed provider
-  (Clerk / WorkOS / Auth0) early; self-host (Ory) later if needed.
-- **Ads server:** own service — serves sponsor inventory, logs impressions/clicks,
-  handles attribution and fraud checks, and feeds the rev-share ledger.
+### Backend (the network)
+One backend language (**Go**) and one managed data/auth/realtime layer (**Supabase**) —
+kept deliberately simple.
+
+- **Custom services:** **Go** — a single backend language for everything custom: ads
+  serving, the rev-share ledger, fraud checks, and news/feed ingestion.
+- **Data + auth + realtime + storage:** **Supabase** — collapses several pieces into one
+  managed layer:
+  - **Postgres** — system of record (accounts, messages, ledger).
+  - **Auth** — GitHub OAuth (perfect for developers).
+  - **Realtime** — Presence (opt-in "who's working") and Broadcast (live chat).
+  - **Storage** — files/assets.
+- **Realtime chat:** **Supabase Realtime** to start — **Broadcast** for live delivery +
+  a Postgres `messages` table for history + **Presence** for online status. No separate
+  chat vendor until chat is proven the moat. Escalate only at scale: **Stream** (managed,
+  buy) or **Centrifugo** (Go, self-host).
 - **Payments / payouts:** **Stripe Connect** — the standard for marketplace rev-share
   (handles KYC, tax forms, global payouts).
-- **Feed/news:** ingestion service (RSS/APIs: Hacker News, etc. + editorial / media-
-  partner content), ranked and served via API.
-- **Trust & safety:** moderation pipeline (managed moderation API + human review) for
-  chat; spam/abuse handling; reporting.
-- **Infra:** Docker; managed platform early (Fly.io / Railway / Render), Kubernetes on
-  AWS/GCP at scale; CDN for assets. Privacy-respecting, opt-in analytics (PostHog).
+- **Trust & safety:** managed moderation API + human review for chat; spam/abuse handling.
+- **Infra:** Docker; managed PaaS (Fly.io / Railway) for the Go services; Kubernetes on
+  AWS/GCP only if scale demands it.
+
+**Net stack:** Code-OSS fork (client) + Go + Supabase + Stripe, plus a moderation API
+and a host. One client language, one backend language, one managed data layer.
 
 ## Roadmap — single-player first, then the network ladder
 
@@ -137,12 +138,13 @@ Each phase has a **move-on criterion**; we don't advance until the prior phase i
 - **Opt-in, off by default.** "N developers building now," abstracted activity
   ("Rust / web project") — **never** repo names, file paths, or code.
 - Granular privacy controls; enterprise-safe by design.
-- Real-time infra goes live (managed → self-hosted).
+- **Supabase Realtime Presence** goes live.
 - **Done when:** healthy opt-in rate, presence adds value even at low density,
   and zero privacy backlash.
 
 ### Phase 4 — Live exchange *(the moat)*
-- Live chat: global / topical / rooms; quick exchange with people working live.
+- Live chat (Supabase Realtime Broadcast + Postgres history): global / topical / rooms;
+  quick exchange with people working live.
 - Trust & safety at scale: moderation, spam, abuse, reporting.
 - **Done when:** chat density measurably lifts retention (network effect kicks in).
 
