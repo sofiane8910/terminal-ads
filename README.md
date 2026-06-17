@@ -71,6 +71,17 @@ Three layers, built in this order:
 the one app a founder keeps open all day. **On-ramp:** the cockpit + feed, worth using on
 its own.
 
+## Workspace & blocks
+
+The cockpit is a full-screen mosaic grid. Terminals are one block type; the others serve
+**Ship / Grow / Know**. The MVP ships 6 core blocks (terminal+agent, status, intelligence
+feed, file/diff preview, logs/process, tasks) plus a connect-once **business integration
+pack** using the tools solo founders actually run (Stripe, Plausible/GA4, Vercel, Loops,
+Crisp, GitHub). No AI-chat block — the user already runs Claude Code / Codex in the panes.
+
+> Full catalog with use cases, sources, auth methods, and the later blocks (the Advisor,
+> market radar, peer network, saved-layout "modes") is in [`docs/blocks.md`](docs/blocks.md).
+
 ## Locked architecture decision: fork Code-OSS
 
 We fork **Code - OSS** (the MIT-licensed VS Code base), not a terminal library, because
