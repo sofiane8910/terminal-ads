@@ -5,6 +5,10 @@
 # THE canonical "launch the app" entry point. When asked to launch the app, use this.
 # Keep it in sync with the build toolchain (Node version pin, fnm activation, code.sh).
 #
+# For LIVE development (code changes picked up without a manual rebuild), run
+# ./scripts/watch.sh in a second terminal first; then this launches against the
+# always-fresh out/, and Cmd+R in the app reloads UI changes. See watch.sh.
+#
 # What it does:
 #   1. Resolves the app root (this script lives in app/scripts/).
 #   2. Activates the pinned Node (app/.nvmrc -> 24.15.0) via fnm, without touching system Node.
