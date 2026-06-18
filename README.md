@@ -1,4 +1,6 @@
-# terminal-ads (working name)
+# Onepilot Terminal
+
+*(repo: `terminal-ads`; product name: **Onepilot Terminal** — the desktop cockpit in the [Onepilot](https://onepilotapp.com) family)*
 
 **Bloomberg for developers.** A terminal-native cockpit for solo technical founders:
 it orchestrates the AI agents you run, guarantees you **never miss a task finishing**,
