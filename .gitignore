@@ -1,0 +1,17 @@
+# Read-only upstream reference (kept on disk, not tracked — DMCA-safe pristine copy).
+# We fork by copying out of vendor/ into app/ and editing only app/.
+vendor/
+
+# Local-only project instructions (kept on disk, not tracked).
+CLAUDE.md
+
+# macOS
+.DS_Store
+
+# Editor / local
+.vscode-test/
+*.log
+
+# Note: app/ is our editable Code-OSS fork and IS tracked.
+# Its build artifacts (out/, .build/, node_modules/, etc.) are ignored
+# by app/.gitignore, carried over from upstream Code-OSS.
